@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE Apparel - Customize</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base Styles & Variables --- */
+:root {
+    --color-primary: #f8de7e;
+    --color-secondary: #939597;
+    --color-background: #0a0a0a;
+    --color-text: #ffffff;
+    --color-text-secondary: #cccccc;
+    --transition-fast: 0.3s ease;
+    --transition-slow: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
+    --modal-blur: blur(10px);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    overflow-x: hidden;
+    line-height: 1.6;
+    padding-top: 100px; /* Space for fixed top nav */
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+}
+
+.content-wrapper {
+    width: 95%;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* --- Top Navigation --- */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    background-color: rgba(10, 10, 10, 0.8);
+    backdrop-filter: var(--modal-blur);
+    z-index: 1000;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
+}
+
+body.show-nav .top-nav {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.top-nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.top-nav-link {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.top-nav-link:hover,
+.top-nav-link.active {
+    color: var(--color-primary);
+}
+
+.top-nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width var(--transition-fast);
+}
+
+.top-nav-link:hover::before,
+.top-nav-link.active::before {
+    width: 100%;
+}
+
+/* --- Main Categories --- */
+.main-categories {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 50px;
+    margin-bottom: 100px;
+    flex-wrap: wrap;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.main-category {
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: var(--modal-blur);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.main-category:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 12px 40px rgba(248, 222, 126, 0.2);
+    border-color: var(--color-primary);
+}
+
+.main-category-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, var(--color-primary), #d4af37);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
+}
+
+.main-category h3 {
+    font-size: 1.5rem;
+    color: var(--color-text);
+}
+
+/* --- Category Items Modal --- */
+.category-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: var(--modal-blur);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.category-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.category-modal-content {
+    background: rgba(30, 30, 46, 0.9);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.5s ease;
+    position: relative;
+}
+
+.category-modal-overlay.show .category-modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    color: var(--color-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-modal:hover {
+    color: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: 30px;
+}
+
+.items-triangle {
+    position: relative;
+    width: 500px;
+    height: 400px;
+    margin-bottom: 40px;
+}
+
+.triangle-item {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: var(--modal-blur);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.triangle-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.triangle-item-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+
+
+.item-hoodie { top: 0; left: 35%; }
+.item-pants { bottom: 0; left: 0; }
+.item-logo { bottom: 0; right: 0; }
+
+.triangle-item-zipper{
+    left: 70%;
+}
+
+/* --- Product Grid Modal --- */
+.product-grid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: var(--modal-blur);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.product-grid-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.product-grid-content {
+    background: rgba(26, 26, 42, 0.95);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 95%;
+    max-width: 1200px;
+    height: 85vh;
+    padding: 30px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    transform: scale(0.95);
+    transition: transform 0.5s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-grid-overlay.show .product-grid-content {
+    transform: scale(1);
+}
+
+.close-grid {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    color: var(--color-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-grid:hover {
+    color: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.grid-title {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 50px;
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+/* --- Product Detail Section (Full Page) --- */
+.product-detail-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.product-detail-section.hidden {
+    display: none;
+}
+
+.product-detail-section .grid-title-page {
+    color: var(--color-primary);
+}
+
+.product-grid-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 50px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+/* --- Product Card --- */
+.product-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(248, 222, 126, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(248, 222, 126, 0.3);
+    border-color: var(--color-primary);
+}
+
+.product-card-image {
+    width: 100%;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: #222;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.product-card-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--color-text);
+    letter-spacing: 0.5px;
+}
+
+.product-card-price {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-card-price-original {
+    color: var(--color-secondary);
+    text-decoration: line-through;
+    font-size: 1.1rem;
+    font-weight: normal;
+}
+
+.product-card-price-discounted {
+    color: var(--color-primary);
+}
+
+.product-card-discount {
+    background-color: #c00000;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.product-card-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.show-details-btn,
+.show-3d-btn {
+    padding: 12px 20px;
+    background: linear-gradient(to right, var(--color-primary), #d4af37);
+    color: var(--color-background);
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    letter-spacing: 1px;
+}
+
+.show-3d-btn {
+    background: linear-gradient(to right, #d4af37, var(--color-primary)); /* Reverse gradient for distinction */
+}
+
+.show-details-btn:hover,
+.show-3d-btn:hover {
+    background: linear-gradient(to right, #e6c86e, #c19e2f);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.show-details-btn:active,
+.show-3d-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Product Detail Modal --- */
+.product-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: var(--modal-blur);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.product-detail-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.product-detail-content {
+    background: rgba(26, 26, 42, 0.95);
+    border-radius: 20px;
+    border: 1px solid var(--color-primary);
+    width: 95%;
+    max-width: 1200px;
+    padding: 30px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    transform: translateY(50px);
+    transition: transform 0.5s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    max-height: 85vh;
+}
+
+.product-detail-overlay.show .product-detail-content {
+    transform: translateY(0);
+}
+
+.close-product-detail {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    color: var(--color-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-product-detail:hover {
+    color: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.viewer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.viewer-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.viewer-title-sub {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin: 0;
+    text-align: center;
+}
+
+.view-toggle-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.view-toggle-btn {
+    padding: 8px 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    border: 1px solid var(--color-secondary);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.view-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.view-toggle-btn.active {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border-color: var(--color-primary);
+}
+
+.viewer-instructions {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin: 10px 0 0;
+    text-align: center;
+}
+
+.viewer-instructions.hidden {
+    display: none;
+}
+
+.view-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+
+.view-3d,
+.view-images {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.view-3d.active,
+.view-images.active {
+    display: block;
+}
+
+#dynamic-3d-model-container {
+    width: 100%;
+    height: 100%;
+}
+
+.image-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.main-image-container {
+    width: 100%;
+    max-width: 500px;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.main-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.thumbnail-navigation {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    height: 20%;
+    flex-wrap: wrap;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+    background-color: #333;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    border-color: var(--color-primary);
+}
+
+.customization-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.customization-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.customization-group.hidden {
+    display: none;
+}
+
+.customization-group h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--color-primary);
+}
+
+.color-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid var(--color-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.color-option:hover,
+.color-option.active {
+    transform: scale(1.1);
+    border-color: var(--color-primary);
+}
+
+.color-option.black { background-color: #000000; }
+.color-option.white { background-color: #ffffff; border: 1px solid #ccc; }
+.color-option.gray { background-color: #939597; }
+.color-option.red { background-color: #c00000; }
+.color-option.blue { background-color: #0066cc; }
+.color-option.green { background-color: #009900; }
+
+.size-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.size-option {
+    width: auto;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text);
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.size-option:hover,
+.size-option.active {
+    transform: scale(1.1);
+    border-color: var(--color-primary);
+    background: rgba(248, 222, 126, 0.2);
+}
+
+.size-recommendation {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-top: 5px;
+}
+
+.suggested-items {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.suggested-item {
+    width: 60px;
+    height: 60px;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background-image: url('https://placehold.co/60x60/444444/CCCCCC?text=P1');
+}
+
+.suggested-item:nth-child(2) { background-image: url('https://placehold.co/60x60/555555/CCCCCC?text=P2'); }
+.suggested-item:nth-child(3) { background-image: url('https://placehold.co/60x60/666666/CCCCCC?text=P3'); }
+.suggested-item:nth-child(4) { background-image: url('https://placehold.co/60x60/777777/CCCCCC?text=P4'); }
+
+.suggested-item:hover,
+.suggested-item.active {
+    transform: scale(1.1);
+    border-color: var(--color-primary);
+}
+
+.add-to-cart-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(to right, var(--color-primary), #d4af37);
+    color: var(--color-background);
+    font-weight: bold;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.add-to-cart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(248, 222, 126, 0.4);
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .product-detail-content {
+        flex-direction: column;
+        height: auto;
+        max-height: 90vh;
+    }
+    .viewer-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 30px;
+    }
+    .customization-section {
+        width: 100%;
+        padding: 20px;
+    }
+    .customization-group {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-categories {
+        gap: 30px;
+    }
+    .main-category {
+        width: 200px;
+        height: 200px;
+    }
+    .items-triangle {
+        width: 250px;
+        height: 215px;
+    }
+    .triangle-item {
+        width: 100px;
+        height: 100px;
+    }
+    .top-nav-links {
+        gap: 20px;
+    }
+    .view-container {
+        height: 300px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <!-- Persistent Top Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-links">
+            <a href="#" class="top-nav-link active" data-category="standard">Standard</a>
+            <a href="#" class="top-nav-link" data-category="customization">Customization</a>
+            <a href="#" class="top-nav-link" data-category="extra">Extra</a>
+        </div>
+    </nav>
+
+
+
+    <!-- Main Category Selection (Standard, Customization, Extra) -->
+    <div class="content-wrapper">
+        <div class="main-categories">
+            <div class="main-category" data-category="standard">
+                <div class="main-category-icon">🧵</div>
+                <h3>STANDARD</h3>
+            </div>
+            <div class="main-category" data-category="customization">
+                <div class="main-category-icon">✂️</div>
+                <h3>CUSTOMIZATION</h3>
+            </div>
+            <div class="main-category" data-category="extra">
+                <div class="main-category-icon">➕</div>
+                <h3>EXTRA</h3>
+            </div>
+        </div>
+
+                <div id="product-detail-section" class="product-detail-section hidden">
+             <!-- We will populate this with the content from .product-detail-content -->
+        </div>
+    </div>
+
+    <!-- Category Items Modal (Triangle Layout) -->
+    <div class="category-modal-overlay" id="category-modal">
+        <div class="category-modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 class="modal-title" id="modal-category-title">STANDARD</h2>
+            <div class="items-triangle">
+                <div class="triangle-item item-hoodie" data-item="hoodie">
+                    <div class="triangle-item-icon">🧥</div>
+                    <span>HOODIE</span>
+                </div>
+                <div class="triangle-item item-pants" data-item="pants">
+                    <div class="triangle-item-icon">👖</div>
+                    <span>PANTS</span>
+                </div>
+                <div class="triangle-item item-logo" data-item="logo">
+                    <div class="triangle-item-icon">🏷️</div>
+                    <span>LOGO</span>
+                </div>
+
+<div class="triangle-item triangle-item-name" data-item="name" style="display: none;">
+        <span class="triangle-item-icon">✍️</span>
+        <span>Name</span>
+    </div>
+    <div class="triangle-item triangle-item-zipper" data-item="zipper" style="display: none;">
+        <span class="triangle-item-icon">🔗</span>
+        <span>Zipper</span>
+    </div>
+            </div>
+        </div>
+    </div>
+
+            <!-- Product Grid Modal -->
+        <div class="product-grid-overlay" id="product-grid-modal">
+            <div class="product-grid-content">
+                <button class="close-grid">&times;</button>
+                <h2 class="grid-title" id="grid-category-title">HOODIES</h2>
+                <div class="product-grid" id="product-grid-container">
+                    <!-- Products will be populated here by JS -->
+                    <!-- Example product card structure -->
+                    <!--
+                    <div class="product-card" data-product-id="hoodie_001">
+                        <div class="product-card-image" style="background-image: url('https://placehold.co/200x250/444/FFF?text=H1');"></div>
+                        <h3 class="product-card-title">Premium Hoodie 1</h3>
+                        <p class="product-card-price">$299</p>
+                        <button class="show-details-btn">Show</button>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Product Detail Modal (3D Viewer & Customization) -->
+<div class="product-detail-overlay" id="product-detail-modal">
+    <div class="product-detail-content">
+        <button class="close-product-detail">&times;</button>
+        <div class="viewer-section">
+            <!-- Populated by JS -->
+        </div>
+        <div class="customization-section">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+</div>
+
+    <!-- Three.js CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+
+
+
+    <script type="module">
+  const categoryModal = document.getElementById('category-modal');
+const productDetailModal = document.getElementById('product-detail-modal');
+const modalTitle = document.getElementById('modal-category-title');
+const viewerTitle = document.getElementById('viewer-item-title');
+const recommendedSizeEl = document.getElementById('recommended-size');
+const topNavLinks = document.querySelectorAll('.top-nav-link');
+const mainCategoryItems = document.querySelectorAll('.main-category');
+const triangleItems = document.querySelectorAll('.triangle-item');
+const triangleItemsContainer = document.querySelector('.items-triangle');
+const closeModalBtn = document.querySelector('.close-modal');
+const closeProductDetailBtn = document.querySelector('.close-product-detail');
+const productGridModal = document.getElementById('product-grid-modal');
+const gridTitle = document.getElementById('grid-category-title');
+const productGridContainer = document.getElementById('product-grid-container');
+const closeGridBtn = document.querySelector('.close-grid');
+// --- Main Page Sections ---
+const mainCategoriesView = document.querySelector('.main-categories');
+const productDetailSection = document.getElementById('product-detail-section');
+// --- Path Navigation ---
+
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.167.1/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.167.1/examples/jsm/loaders/GLTFLoader.js';
+
+// State to track the current path (e.g., ['standard', 'hoodie'])
+let currentPath = [];
+// --- State & Configuration ---
+let currentMainCategory = 'standard'; // Default
+let currentItem = null;
+let scene = null;
+let camera = null;
+let renderer = null;
+let controls = null;
+let currentModel = null;
+// --- Product Data ---
+const PRODUCT_DATA = {
+    standard: {
+        hoodie: [
+            {
+                id: 'std_hoodie_001',
+                name: 'Urban Classic Hoodie',
+                price: 299,
+                discountPercent: 10,
+                images: [
+                    'bdl-hoodie-charcoal-1.webp',
+                    'assets/images/std_hoodie_001_back.jpg',
+                    'assets/images/std_hoodie_001_side.jpg'
+                ],
+                image: 'bdl-hoodie-charcoal-1.webp',
+                modelPath: 'hoodie.glb' // Added 3D model path
+            },
+            {
+                id: 'std_hoodie_002',
+                name: 'Signature Blend Hoodie',
+                price: 349,
+                discountPercent: 0,
+                images: [
+                    'assets/images/std_hoodie_002.jpg',
+                    'assets/images/std_hoodie_002_back.jpg',
+                    'assets/images/std_hoodie_002_side.jpg'
+                ],
+                image: 'assets/images/std_hoodie_002.jpg',
+                modelPath: 'assets/models/hoodie_design1.glb' // Example path
+            }
+        ],
+        pants: [
+            {
+                id: 'std_pant_001',
+                name: 'Slim Fit Chinos',
+                price: 199,
+                discountPercent: 0,
+                images: [
+                    'bdl-hoodie-charcoal-1.webp',
+                    'assets/images/std_pants_001_back.jpg',
+                    'assets/images/std_pants_001_side.jpg'
+                ],
+                image: 'bdl-hoodie-charcoal-1.webp',
+                modelPath: 'assets/models/pants_style1.glb' // Example path
+            }
+        ],
+        logo: [
+            {
+                id: 'std_logo_001',
+                name: 'Embroidered Logo Patch',
+                price: 49,
+                discountPercent: 0,
+                images: ['assets/images/std_logo_001.jpg'],
+                image: 'assets/images/std_logo_001.jpg',
+                modelPath: null // No 3D model for logos
+            }
+        ]
+    },
+    customization: {
+        
+        hoodie: [
+            {
+                id: 'cust_hoodie_001',
+                name: 'Bespoke Hoodie',
+                price: 499,
+                discountPercent: 0,
+                images: [
+                    'bdl-hoodie-charcoal-1.webp',
+                    'assets/images/cust_hoodie_001_back.jpg',
+                    'assets/images/cust_hoodie_001_side.jpg'
+                ],
+                image: 'bdl-hoodie-charcoal-1.webp',
+                modelPath: 'assets/models/hoodie.glb' // Example path
+            }
+        ],
+        pants: [
+            {
+                id: 'cust_pants_001',
+                name: 'Tailored Wool Trousers',
+                price: 599,
+                discountPercent: 15,
+                images: [
+                    'bdl-hoodie-charcoal-1.webp',
+                    'assets/images/cust_pants_001_back.jpg',
+                    'assets/images/cust_pants_001_side.jpg'
+                ],
+                image: 'bdl-hoodie-charcoal-1.webp',
+                modelPath: 'assets/models/pants_style1.glb' // Example path
+            }
+        ],
+        logo: []
+    },
+     extra: {
+        name: [
+            {
+                id: 'extra_name_001',
+                name: 'Custom Name Embroidery',
+                price: 29,
+                discountPercent: 0,
+                images: ['assets/images/extra_name_001.jpg'],
+                image: 'assets/images/extra_name_001.jpg',
+                modelPath: null
+            },
+            {
+                id: 'extra_name_002',
+                name: 'Premium Name Print',
+                price: 39,
+                discountPercent: 10,
+                images: ['assets/images/extra_name_002.jpg'],
+                image: 'assets/images/extra_name_002.jpg',
+                modelPath: null
+            }
+        ],
+        zipper: [
+            {
+                id: 'extra_zipper_001',
+                name: 'Gold Zipper Upgrade',
+                price: 59,
+                discountPercent: 0,
+                images: ['assets/images/extra_zipper_001.jpg'],
+                image: 'assets/images/extra_zipper_001.jpg',
+                modelPath: null
+            },
+            {
+                id: 'extra_zipper_002',
+                name: 'Custom Engraved Zipper',
+                price: 79,
+                discountPercent: 5,
+                images: ['assets/images/extra_zipper_002.jpg'],
+                image: 'assets/images/extra_zipper_002.jpg',
+                modelPath: null
+            }
+        ],
+
+    }
+
+};
+
+
+
+// --- Helper Functions ---
+function getDiscountedPrice(product) {
+    if (product.discountPercent > 0) {
+        return Math.round(product.price * (1 - product.discountPercent / 100));
+    }
+    return product.price;
+}
+function formatPriceDisplay(product) {
+    const discountedPrice = getDiscountedPrice(product);
+    if (product.discountPercent > 0) {
+        return `<span class="product-card-price-original">$${product.price}</span> <span class="product-card-price-discounted">$${discountedPrice}</span>`;
+    } else {
+        return `<span class="product-card-price-discounted">$${discountedPrice}</span>`;
+    }
+}
+function getProductsForGrid(mainCategory, itemPart) {
+    if (PRODUCT_DATA[mainCategory] && PRODUCT_DATA[mainCategory][itemPart]) {
+        return [...PRODUCT_DATA[mainCategory][itemPart]];
+    } else {
+        console.warn(`No product data found for category '${mainCategory}' and part '${itemPart}'.`);
+        return [];
+    }
+}
+
+
+const userMeasurements = { height: 175, weight: 70, gender: 'male' };
+function calculateSize(height, weight) {
+    // Dummy size calculation logic
+    if (height < 165) return 'S';
+    if (height < 175) return 'M';
+    if (height < 185) return 'L';
+    return 'XL';
+}
+function initEventListeners() {
+    topNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = e.currentTarget.dataset.category;
+            console.log("Top nav link clicked:", category);
+            topNavLinks.forEach(l => l.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentMainCategory = category;
+            if (mainCategoriesView && !mainCategoriesView.classList.contains('hidden')) {
+                mainCategoriesView.classList.add('hidden');
+            }
+            document.body.classList.add('show-nav');
+            openCategoryModal(category);
+        });
+    });
+    mainCategoryItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const category = item.dataset.category;
+            console.log("Main category clicked:", category);
+            if (mainCategoriesView) {
+                mainCategoriesView.classList.add('hidden');
+            } else {
+                console.error("mainCategoriesView element not found!");
+            }
+            document.body.classList.add('show-nav');
+            openCategoryModal(category);
+        });
+    });
+    closeModalBtn.addEventListener('click', closeCategoryModal);
+    categoryModal.addEventListener('click', (e) => {
+        if (e.target === categoryModal) closeCategoryModal();
+    });
+    triangleItemsContainer.addEventListener('click', (e) => {
+        const item = e.target.closest('.triangle-item');
+        if (!item) return;
+        const itemType = item.dataset.item;
+        console.log("Triangle item clicked:", itemType);
+        if (['hoodie', 'pants', 'logo', 'name', 'zipper'].includes(itemType)) {
+            openProductGridInPage(itemType);
+        } else {
+            console.warn("Unexpected item click or context:", itemType, currentMainCategory);
+        }
+    });
+    closeProductDetailBtn.addEventListener('click', closeProductDetailModal);
+    productDetailModal.addEventListener('click', (e) => {
+        if (e.target === productDetailModal) closeProductDetailModal();
+    });
+}
+
+function openProductGridInPage(itemType) {
+    console.log(`Opening product grid for itemType: ${itemType}, category: ${currentMainCategory}`);
+    closeCategoryModal();
+    if (mainCategoriesView) {
+        mainCategoriesView.classList.add('hidden');
+        console.log("Main categories hidden.");
+    }
+    document.body.classList.add('show-nav');
+    if (!productDetailSection) {
+        console.error("Product detail section not found!");
+        return;
+    }
+    const mainCategoryDisplay = currentMainCategory.charAt(0).toUpperCase() + currentMainCategory.slice(1);
+    let itemDisplay = itemType.charAt(0).toUpperCase() + itemType.slice(1) + 's';
+    if (itemType === 'name') itemDisplay = 'Names';
+    if (itemType === 'zipper') itemDisplay = 'Zippers';
+    productDetailSection.innerHTML = `
+        <div class="product-grid-page-header">
+            <h2 class="grid-title-page">${mainCategoryDisplay} - ${itemDisplay}</h2>
+        </div>
+        <div class="product-grid-page" id="product-grid-page-container">
+            <!-- Products will be populated here -->
+        </div>
+    `;
+    productDetailSection.classList.remove('hidden');
+    const gridContainer = productDetailSection.querySelector('#product-grid-page-container');
+    if (!gridContainer) {
+        console.error("Product grid container not found!");
+        return;
+    }
+    gridContainer.innerHTML = '';
+    const products = getProductsForGrid(currentMainCategory, itemType);
+    console.log(`Products found for ${currentMainCategory}.${itemType}:`, products.length);
+    if (products.length === 0) {
+        gridContainer.innerHTML = `<p class="no-products-message">No products available in this category yet.</p>`;
+        return;
+    }
+    products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.dataset.productId = product.id;
+        const priceHTML = formatPriceDisplay(product);
+        productCard.innerHTML = `
+            <div class="product-card-image" style="background-image: url('${product.image}');"></div>
+            <h3 class="product-card-title">${product.name}</h3>
+            <p class="product-card-price">${priceHTML}</p>
+            ${product.discountPercent > 0 ? `<span class="product-card-discount">-${product.discountPercent}%</span>` : ''}
+            <div class="product-card-buttons">
+                <button class="show-details-btn" data-product-id="${product.id}">Show</button>
+                ${product.modelPath ? `<button class="show-3d-btn" data-product-id="${product.id}">3D</button>` : ''}
+            </div>
+        `;
+        gridContainer.appendChild(productCard);
+        const showBtn = productCard.querySelector('.show-details-btn');
+        showBtn.addEventListener('click', () => {
+            console.log(`Show button clicked for product ID: ${product.id}`);
+            loadProductDetails(product, 'images');
+            document.body.classList.add('show-nav');
+            productDetailModal.classList.add('show');
+        }, { once: false });
+        const show3DBtn = productCard.querySelector('.show-3d-btn');
+        if (show3DBtn) {
+            show3DBtn.addEventListener('click', () => {
+                console.log(`3D button clicked for product ID: ${product.id}`);
+                loadProductDetails(product, '3d');
+                document.body.classList.add('show-nav');
+                productDetailModal.classList.add('show');
+            }, { once: false });
+        }
+    });
+    currentPath = [currentMainCategory, itemType];
+}
+
+function attachCustomizationListenersToSection(sectionElement) {
+    sectionElement.querySelectorAll('.color-option').forEach(option => {
+        const newOption = option.cloneNode(true);
+        option.parentNode.replaceChild(newOption, option);
+        newOption.addEventListener('click', function () {
+            sectionElement.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            const color = this.dataset.color;
+            console.log("Color selected (full-page):", color);
+            // Note: No model color change, as we're using images only
+        });
+    });
+    sectionElement.querySelectorAll('.size-option').forEach(option => {
+        const newOption = option.cloneNode(true);
+        option.parentNode.replaceChild(newOption, option);
+        newOption.addEventListener('click', function () {
+            sectionElement.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            const size = this.dataset.size;
+            console.log("Size selected (full-page):", size);
+        });
+    });
+    sectionElement.querySelectorAll('.suggested-item').forEach(item => {
+        const newItem = item.cloneNode(true);
+        item.parentNode.replaceChild(newItem, item);
+        newItem.addEventListener('click', function () {
+            sectionElement.querySelectorAll('.suggested-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            const pantsStyle = this.dataset.suggestedPants;
+            console.log("Suggested pants selected (full-page):", pantsStyle);
+            // Note: No pants model loading, as we're using images only
+        });
+    });
+    const addToCartBtn = sectionElement.querySelector('.add-to-cart-btn');
+    if (addToCartBtn) {
+        const newBtn = addToCartBtn.cloneNode(true);
+        addToCartBtn.parentNode.replaceChild(newBtn, addToCartBtn);
+        newBtn.addEventListener('click', () => {
+            const selectedColor = sectionElement.querySelector('.color-option.active')?.dataset.color;
+            const selectedSize = sectionElement.querySelector('.size-option.active')?.dataset.size;
+            const productName = sectionElement.querySelector('#viewer-item-title')?.textContent || currentItem;
+            if (selectedColor && selectedSize) {
+                alert(`Added ${productName} to cart!\nColor: ${selectedColor}\nSize: ${selectedSize}`);
+            } else {
+                alert("Please select both a color and a size.");
+            }
+        });
+    }
+}
+
+
+function openCategoryModal(category) {
+    currentMainCategory = category;
+    modalTitle.textContent = category.toUpperCase();
+    topNavLinks.forEach(link => link.classList.remove('active'));
+    const activeLink = Array.from(topNavLinks).find(link => link.dataset.category === category);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+    const standardItems = document.querySelectorAll(
+        '.triangle-item-hoodie, .triangle-item-pants, .triangle-item-logo, .item-hoodie, .item-pants, .item-logo'
+    );
+    const extraItems = document.querySelectorAll(
+        '.triangle-item-name, .triangle-item-zipper'
+    );
+    console.log('Standard items selected:', standardItems.length, 'Extra items selected:', extraItems.length);
+    [...standardItems, ...extraItems].forEach(item => {
+        item.style.display = 'none';
+        item.style.setProperty('display', 'none', 'important'); // Force hide to override CSS
+    });
+    if (category === 'extra') {
+        extraItems.forEach(item => {
+            item.style.display = 'flex';
+            item.style.removeProperty('display'); // Clear override for visible items
+            console.log(`Showing extra item: ${item.dataset.item}`);
+        });
+    } else {
+        standardItems.forEach(item => {
+            item.style.display = 'flex';
+            item.style.removeProperty('display'); // Clear override for visible items
+            console.log(`Showing standard item: ${item.dataset.item}`);
+        });
+    }
+    categoryModal.classList.add('show');
+    // Hide main-categories when category is selected
+    if (mainCategoriesView) {
+        mainCategoriesView.classList.add('hidden');
+        console.log("Main categories hidden.");
+    }
+}
+
+function closeCategoryModal() {
+    categoryModal.classList.remove('show');
+}
+function openProductDetailModal(itemType) {
+    currentItem = itemType;
+    viewerTitle.textContent = `PREMIUM ${itemType.toUpperCase()}`;
+    const recommendedSize = calculateSize(userMeasurements.height, userMeasurements.weight);
+    recommendedSizeEl.textContent = recommendedSize;
+    const sizeOptions = document.querySelectorAll('.size-option');
+    sizeOptions.forEach(option => option.classList.remove('active'));
+    const recommendedOption = Array.from(sizeOptions).find(opt => opt.dataset.size === recommendedSize);
+    if (recommendedOption) {
+        setTimeout(() => recommendedOption.click(), 0);
+    }
+    document.body.classList.add('show-nav');
+    closeCategoryModal();
+    productDetailModal.classList.add('show');
+    document.querySelectorAll('.color-option').forEach(option => {
+        const clone = option.cloneNode(true);
+        option.parentNode.replaceChild(clone, option);
+        clone.addEventListener('click', function () {
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            const color = this.dataset.color;
+            console.log("Color selected:", color);
+        });
+    });
+    document.querySelectorAll('.size-option').forEach(option => {
+        const clone = option.cloneNode(true);
+        option.parentNode.replaceChild(clone, option);
+        clone.addEventListener('click', function () {
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            const size = this.dataset.size;
+            console.log("Size selected:", size);
+        });
+    });
+    document.querySelectorAll('.suggested-item').forEach(item => {
+        const clone = item.cloneNode(true);
+        item.parentNode.replaceChild(clone, item);
+        clone.addEventListener('click', function () {
+            document.querySelectorAll('.suggested-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            const pantsStyle = this.dataset.suggestedPants;
+            console.log("Suggested pants selected:", pantsStyle);
+        });
+    });
+    const addToCartBtn = document.querySelector('.add-to-cart-btn');
+    if (addToCartBtn) {
+        const newBtn = addToCartBtn.cloneNode(true);
+        addToCartBtn.parentNode.replaceChild(newBtn, addToCartBtn);
+        newBtn.addEventListener('click', () => {
+            const selectedColor = document.querySelector('.color-option.active')?.dataset.color;
+            const selectedSize = document.querySelector('.size-option.active')?.dataset.size;
+            if (selectedColor && selectedSize) {
+                alert(`Added ${currentItem?.toUpperCase()} to cart!\nColor: ${selectedColor}\nSize: ${selectedSize}`);
+            } else {
+                alert("Please select both a color and a size.");
+            }
+        });
+    }
+}
+
+function attachAllDetailModalListeners(has3DModel) {
+    console.log("Attaching listeners, has3DModel:", has3DModel);
+    const customizationSection = document.querySelector('.customization-section');
+    if (customizationSection) {
+        const colorOptions = customizationSection.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            const newOption = option.cloneNode(true);
+            option.parentNode.replaceChild(newOption, option);
+            newOption.addEventListener('click', function () {
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const color = this.dataset.color;
+                console.log("Color selected (detail modal):", color);
+                if (has3DModel && scene) {
+                    changeModelColor(getColorHex(color));
+                }
+            });
+        });
+        const sizeOptions = customizationSection.querySelectorAll('.size-option');
+        sizeOptions.forEach(option => {
+            const newOption = option.cloneNode(true);
+            option.parentNode.replaceChild(newOption, option);
+            newOption.addEventListener('click', function () {
+                sizeOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const size = this.dataset.size;
+                console.log("Size selected (detail modal):", size);
+            });
+        });
+        const suggestedItems = customizationSection.querySelectorAll('.suggested-item');
+        suggestedItems.forEach(item => {
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+            newItem.addEventListener('click', function () {
+                suggestedItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                const pantsStyle = this.dataset.suggestedPants;
+                console.log("Suggested pants selected (detail modal):", pantsStyle);
+            });
+        });
+        const addToCartBtn = customizationSection.querySelector('.add-to-cart-btn');
+        if (addToCartBtn) {
+            const newBtn = addToCartBtn.cloneNode(true);
+            addToCartBtn.parentNode.replaceChild(newBtn, addToCartBtn);
+            newBtn.addEventListener('click', () => {
+                const selectedColor = customizationSection.querySelector('.color-option.active')?.dataset.color || 'default';
+                const selectedSize = customizationSection.querySelector('.size-option.active')?.dataset.size;
+                const productName = document.querySelector('.viewer-title')?.textContent || 'Product';
+                if (selectedSize) {
+                    alert(`Added ${productName} to cart!\nColor: ${selectedColor}\nSize: ${selectedSize}`);
+                } else {
+                    alert("Please select a size.");
+                }
+            });
+        }
+    }
+    console.log("All listeners re-attached to product detail modal.");
+}
+function closeProductDetailModal() {
+    console.log("Closing product detail modal...");
+    productDetailModal.classList.remove('show');
+    const viewerSection = document.querySelector('.viewer-section');
+    if (viewerSection) {
+        viewerSection.innerHTML = `
+            <h3 class="viewer-title" id="viewer-item-title">PREMIUM PRODUCT</h3>
+        `;
+    }
+    const customizationSection = document.querySelector('.customization-section');
+    if (customizationSection) {
+        customizationSection.innerHTML = '';
+    }
+    // Clean up 3D resources
+    if (scene) {
+        if (currentModel) {
+            scene.remove(currentModel);
+            currentModel = null;
+        }
+        // Stop animation loop
+        const stopAnimation = init3D(); // Get cleanup function
+        if (typeof stopAnimation === 'function') {
+            stopAnimation();
+        }
+        scene = null;
+        camera = null;
+        if (renderer) {
+            renderer.dispose();
+            renderer.domElement.remove(); // Remove canvas from DOM
+            renderer = null;
+        }
+        controls = null;
+    }
+    removeDetailModalListeners();
+    currentItem = null;
+    console.log("Product detail modal closed and state reset.");
+}
+function removeDetailModalListeners() {
+    console.log(">>> removeDetailModalListeners called <<<");
+    const customizationSection = document.querySelector('.customization-section');
+    if (customizationSection) {
+        const colorOptions = customizationSection.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            const newOption = option.cloneNode(true);
+            option.parentNode.replaceChild(newOption, option);
+            console.log("Removed color option listener by cloning:", newOption.dataset.color);
+        });
+        const sizeOptions = customizationSection.querySelectorAll('.size-option');
+        sizeOptions.forEach(option => {
+            const newOption = option.cloneNode(true);
+            option.parentNode.replaceChild(newOption, option);
+            console.log("Removed size option listener by cloning:", newOption.dataset.size);
+        });
+        const suggestedItems = customizationSection.querySelectorAll('.suggested-item');
+        suggestedItems.forEach(item => {
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+            console.log("Removed suggested item listener by cloning:", newItem.dataset.suggestedPants);
+        });
+        const addToCartBtn = customizationSection.querySelector('.add-to-cart-btn');
+        if (addToCartBtn) {
+            const newBtn = addToCartBtn.cloneNode(true);
+            addToCartBtn.parentNode.replaceChild(newBtn, addToCartBtn);
+            console.log("Removed add to cart button listener by cloning.");
+        }
+    }
+    const viewerHeader = document.querySelector('.viewer-header');
+    if (viewerHeader) {
+        const toggleButtons = viewerHeader.querySelectorAll('.view-toggle-btn');
+        toggleButtons.forEach(button => {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            console.log("Removed view toggle button listener by cloning:", newButton.dataset.view);
+        });
+    }
+    const gridContainer = document.querySelector('#product-grid-page-container') || productGridContainer;
+    if (gridContainer) {
+        const showButtons = gridContainer.querySelectorAll('.show-details-btn, .show-3d-btn');
+        showButtons.forEach(btn => {
+            console.log("Verified show/3D button persists:", btn.dataset.productId);
+        });
+    }
+    console.log("<<< removeDetailModalListeners completed >>>");
+}
+function openProductGridModal(itemType) {
+    closeCategoryModal();
+    let gridTitleText = itemType.charAt(0).toUpperCase() + itemType.slice(1) + 's';
+    if (itemType === 'name') gridTitleText = 'Names';
+    if (itemType === 'zipper') gridTitleText = 'Zippers';
+    gridTitle.textContent = gridTitleText;
+    productGridContainer.innerHTML = '';
+    const products = getProductsForGrid(currentMainCategory, itemType);
+    if (products.length === 0) {
+        productGridContainer.innerHTML = `<p class="no-products-message">No products available in this category yet.</p>`;
+        return;
+    }
+    products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.dataset.productId = product.id;
+        const priceHTML = formatPriceDisplay(product);
+        productCard.innerHTML = `
+            <div class="product-card-image" style="background-image: url('${product.image}');"></div>
+            <h3 class="product-card-title">${product.name}</h3>
+            <p class="product-card-price">${priceHTML}</p>
+            ${product.discountPercent > 0 ? `<span class="product-card-discount">-${product.discountPercent}%</span>` : ''}
+            <div class="product-card-buttons">
+                <button class="show-details-btn">Show</button>
+                ${product.modelPath ? `<button class="show-3d-btn" data-product-id="${product.id}">3D</button>` : ''}
+            </div>
+        `;
+        productGridContainer.appendChild(productCard);
+        const showBtn = productCard.querySelector('.show-details-btn');
+        showBtn.addEventListener('click', () => {
+            console.log(`Show button clicked for product ID: ${product.id}`);
+            loadProductDetails(product, 'images');
+            document.body.classList.add('show-nav');
+            closeProductGridModal();
+            productDetailModal.classList.add('show');
+        }, { once: false });
+        const show3DBtn = productCard.querySelector('.show-3d-btn');
+        if (show3DBtn) {
+            show3DBtn.addEventListener('click', () => {
+                console.log(`3D button clicked for product ID: ${product.id}`);
+                loadProductDetails(product, '3d');
+                document.body.classList.add('show-nav');
+                closeProductGridModal();
+                productDetailModal.classList.add('show');
+            }, { once: false });
+        }
+    });
+    productGridModal.classList.add('show');
+    currentPath = [currentMainCategory, itemType];
+}
+
+function closeProductGridModal() {
+    productGridModal.classList.remove('show');
+}
+async function loadProductDetails(product, initialView = 'images') {
+    console.log("--- STARTING loadProductDetails ---");
+    console.log("Product data received:", product, "Initial view:", initialView);
+    currentItem = product.type || (product.id ? product.id.split('_')[1] : 'unknown');
+    const viewerTitle = document.querySelector('.viewer-title');
+    if (viewerTitle) {
+        viewerTitle.textContent = product.name;
+    }
+    const viewerSection = document.querySelector('.viewer-section');
+    if (viewerSection) {
+        viewerSection.innerHTML = '';
+        const viewerHeader = document.createElement('div');
+        viewerHeader.className = 'viewer-header';
+        viewerHeader.innerHTML = `
+            <h3 class="viewer-title-sub">${product.name}</h3>
+            ${product.modelPath ? `
+                <div class="view-toggle-buttons">
+                    <button class="view-toggle-btn ${initialView === '3d' ? 'active' : ''}" data-view="3d">3D Model</button>
+                    <button class="view-toggle-btn ${initialView === 'images' ? 'active' : ''}" data-view="images">Images</button>
+                </div>
+                <p class="viewer-instructions ${initialView === '3d' ? '' : 'hidden'}">Drag to rotate. Scroll to zoom.</p>
+            ` : ''}
+        `;
+        const viewContainer = document.createElement('div');
+        viewContainer.className = 'view-container';
+        const modelView = document.createElement('div');
+        modelView.className = `view view-3d ${initialView === '3d' && product.modelPath ? 'active' : ''}`;
+        modelView.innerHTML = product.modelPath ? '<div id="dynamic-3d-model-container" style="width:100%; height:400px;"></div>' : '';
+        const imageView = document.createElement('div');
+        imageView.className = `view view-images ${initialView === 'images' || !product.modelPath ? 'active' : ''}`;
+        let imagesHTML = '<div class="image-gallery">';
+        if (product.images && product.images.length > 0) {
+            imagesHTML += `<div class="main-image-container"><img src="${product.images[0]}" alt="${product.name}" class="main-image"></div>`;
+            imagesHTML += '<div class="thumbnail-navigation">';
+            product.images.forEach((imgSrc, index) => {
+                const isActiveClass = index === 0 ? 'thumbnail active' : 'thumbnail';
+                imagesHTML += `<img src="${imgSrc}" alt="${product.name} ${index + 1}" class="${isActiveClass}" data-index="${index}">`;
+            });
+            imagesHTML += '</div>';
+        } else {
+            imagesHTML += '<p>No images available for this product.</p>';
+        }
+        imagesHTML += '</div>';
+        imageView.innerHTML = imagesHTML;
+        viewContainer.appendChild(modelView);
+        viewContainer.appendChild(imageView);
+        viewerSection.appendChild(viewerHeader);
+        viewerSection.appendChild(viewContainer);
+        await new Promise(resolve => queueMicrotask(resolve));
+        if (product.modelPath && initialView === '3d') {
+            try {
+                await init3D();
+                await loadMainModelByPath(product.modelPath);
+                // Apply initial color
+                const activeColor = document.querySelector('.color-option.active')?.dataset.color || 'black';
+                changeModelColor(getColorHex(activeColor));
+                console.log("3D model initialized and loaded for:", product.name);
+            } catch (err) {
+                console.error("Failed to initialize or load 3D model:", err);
+                modelView.innerHTML = `<p style="color:red;">Error loading 3D model.</p>`;
+            }
+        }
+        if (product.images && product.images.length > 0) {
+            const thumbnails = imageView.querySelectorAll('.thumbnail');
+            const mainImage = imageView.querySelector('.main-image');
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    const index = parseInt(thumb.dataset.index);
+                    const newSrc = product.images[index];
+                    if (mainImage) {
+                        mainImage.src = newSrc;
+                        mainImage.alt = `${product.name} ${index + 1}`;
+                    }
+                    thumbnails.forEach(t => t.classList.toggle('active', t === thumb));
+                    console.log(`Image switched to index ${index}`);
+                });
+            });
+        }
+        if (product.modelPath) {
+            const toggleButtons = viewerHeader.querySelectorAll('.view-toggle-btn');
+            const instructions = viewerHeader.querySelector('.viewer-instructions');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const targetView = button.dataset.view;
+                    toggleButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.view === targetView));
+                    modelView.classList.toggle('active', targetView === '3d');
+                    imageView.classList.toggle('active', targetView === 'images');
+                    if (instructions) {
+                        instructions.classList.toggle('hidden', targetView !== '3d');
+                    }
+                    const customizationSection = document.querySelector('.customization-section');
+                    if (customizationSection) {
+                        const colorGroup = customizationSection.querySelector('.customization-group-color');
+                        if (colorGroup) {
+                            colorGroup.classList.toggle('hidden', targetView !== '3d');
+                        }
+                    }
+                    if (targetView === '3d' && product.modelPath && !scene) {
+                        try {
+                            await init3D();
+                            await loadMainModelByPath(product.modelPath);
+                            // Apply current color
+                            const activeColor = document.querySelector('.color-option.active')?.dataset.color || 'black';
+                            changeModelColor(getColorHex(activeColor));
+                            console.log("3D model initialized on toggle for:", product.name);
+                        } catch (err) {
+                            console.error("Failed to initialize 3D on toggle:", err);
+                            modelView.innerHTML = `<p style="color:red;">Error loading 3D model.</p>`;
+                        }
+                    }
+                    console.log(`Switched to ${targetView} view for product ${product.id}`);
+                });
+            });
+        }
+    }
+    const customizationSection = document.querySelector('.customization-section');
+    if (customizationSection) {
+        customizationSection.innerHTML = '';
+        let customizationHTML = '';
+        if (product.modelPath) {
+            customizationHTML += `
+                <div class="customization-group customization-group-color ${initialView !== '3d' ? 'hidden' : ''}">
+                    <h4>Color</h4>
+                    <div class="color-options">
+                        <div class="color-option black active" data-color="black"></div>
+                        <div class="color-option white" data-color="white"></div>
+                        <div class="color-option gray" data-color="gray"></div>
+                        <div class="color-option red" data-color="red"></div>
+                        <div class="color-option blue" data-color="blue"></div>
+                        <div class="color-option green" data-color="green"></div>
+                    </div>
+                </div>
+            `;
+        }
+        customizationHTML += `
+            <div class="customization-group">
+                <h4>Size</h4>
+                <div class="size-options">
+                    <div class="size-option" data-size="S">S</div>
+                    <div class="size-option active" data-size="M">M</div>
+                    <div class="size-option" data-size="L">L</div>
+                    <div class="size-option" data-size="XL">XL</div>
+                </div>
+                <p class="size-recommendation">Recommended Size: <span id="recommended-size">M</span></p>
+            </div>
+        `;
+        if (product.type === 'hoodie' || (product.id && product.id.includes('hoodie'))) {
+            customizationHTML += `
+                <div class="customization-group">
+                    <h4>Suggested Pants</h4>
+                    <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 10px;">Click to preview with hoodie</p>
+                    <div class="suggested-items">
+                        <div class="suggested-item" data-suggested-pants="style1"></div>
+                        <div class="suggested-item" data-suggested-pants="style2"></div>
+                        <div class="suggested-item" data-suggested-pants="style3"></div>
+                        <div class="suggested-item" data-suggested-pants="style4"></div>
+                    </div>
+                </div>
+            `;
+        }
+        customizationHTML += `<button class="add-to-cart-btn">ADD TO CART - $${getDiscountedPrice(product)}</button>`;
+        customizationSection.innerHTML = customizationHTML;
+        const recommendedSize = calculateSize(userMeasurements.height, userMeasurements.weight);
+        const recommendedSizeEl = customizationSection.querySelector('#recommended-size');
+        if (recommendedSizeEl) recommendedSizeEl.textContent = recommendedSize;
+        const sizeOptions = customizationSection.querySelectorAll('.size-option');
+        sizeOptions.forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.size === recommendedSize) {
+                option.classList.add('active');
+            }
+        });
+        if (product.modelPath) {
+            const colorOptions = customizationSection.querySelectorAll('.color-option');
+            colorOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.color === 'black') {
+                    option.classList.add('active');
+                }
+            });
+        }
+    }
+    // Ensure scrolling for product detail content
+    const productDetailContent = document.querySelector('.product-detail-content');
+    if (productDetailContent) {
+        productDetailContent.style.overflowY = 'auto';
+        productDetailContent.style.maxHeight = '90vh';
+        productDetailContent.style.display = 'flex';
+        productDetailContent.style.flexDirection = 'column';
+    }
+    setTimeout(() => attachAllDetailModalListeners(product.modelPath), 100);
+    console.log("Product details loading process completed.");
+}
+initEventListeners();
+
+
+async function init3D() {
+    const modelContainer = document.getElementById('dynamic-3d-model-container');
+    if (!modelContainer) {
+        console.error("3D container not found!");
+        return;
+    }
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    camera = new THREE.PerspectiveCamera(75, modelContainer.clientWidth / modelContainer.clientHeight, 0.1, 1000);
+    camera.position.set(0, 1, 2);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(modelContainer.clientWidth, modelContainer.clientHeight);
+    modelContainer.appendChild(renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 0.5;
+    const ambientLight = new THREE.AmbientLight(0x404040, 2);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(0, 1, 1);
+    scene.add(directionalLight);
+    let animationFrameId = null; // Store animation frame ID
+    function animate() {
+        if (!scene || !camera || !renderer || !controls) {
+            console.log("Animation loop stopped due to null 3D resources.");
+            return;
+        }
+        animationFrameId = requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+    // Return cleanup function to cancel animation
+    return () => {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            console.log("Animation loop canceled.");
+        }
+    };
+}
+// --- Load 3D Model ---
+async function loadMainModelByPath(modelPath) {
+    if (!scene || !camera || !renderer) {
+        console.error("3D scene not initialized!");
+        return;
+    }
+    const modelContainer = document.getElementById('dynamic-3d-model-container');
+    if (!modelContainer) {
+        console.error("3D container not found!");
+        return;
+    }
+    // Clear previous model
+    if (currentModel) {
+        scene.remove(currentModel);
+        currentModel = null;
+    }
+    try {
+        const loader = new GLTFLoader();
+        const gltf = await loader.loadAsync(modelPath);
+        currentModel = gltf.scene;
+        currentModel.scale.set(1, 1, 1);
+        currentModel.position.set(0, 0, 0);
+        scene.add(currentModel);
+        console.log(`3D model loaded: ${modelPath}`);
+    } catch (err) {
+        console.error(`Error loading 3D model from ${modelPath}:`, err);
+        modelContainer.innerHTML = `<p style="color:red;">Failed to load 3D model.</p>`;
+    }
+}
+
+function changeModelColor(colorHex) {
+    if (!currentModel) {
+        console.warn("No 3D model loaded to change color.");
+        return;
+    }
+    // Traverse the model and update material colors
+    currentModel.traverse((child) => {
+        if (child.isMesh && child.material) {
+            child.material.color.set(colorHex);
+            child.material.needsUpdate = true;
+        }
+    });
+    console.log(`3D model color changed to: ${colorHex}`);
+}
+
+function getColorHex(colorName) {
+    const colors = {
+        black: 0x000000,
+        white: 0xffffff,
+        gray: 0x808080,
+        red: 0xff0000,
+        blue: 0x0000ff,
+        green: 0x00ff00
+    };
+    return colors[colorName] || 0x000000;
+}
+
+
+
+// --- Show Category Modal ---
+function showCategoryModal(category) {
+    console.log("Showing category modal for:", category);
+    const modal = document.getElementById('category-modal');
+    if (!modal) {
+        console.error("Category modal not found!");
+        return;
+    }
+    const modalTitle = modal.querySelector('.modal-title');
+    if (modalTitle) {
+        modalTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+    }
+    const itemsContainer = modal.querySelector('.items-triangle');
+    if (itemsContainer) {
+        itemsContainer.innerHTML = `
+            <div class="triangle-item item-hoodie" data-type="hoodie">
+                <span class="triangle-item-icon">👕</span>
+                <span>Hoodie</span>
+            </div>
+            <div class="triangle-item item-pants" data-type="pants">
+                <span class="triangle-item-icon">👖</span>
+                <span>Pants</span>
+            </div>
+            <div class="triangle-item item-logo" data-type="logo">
+                <span class="triangle-item-icon">🎨</span>
+                <span>Logo</span>
+            </div>
+        `;
+    }
+    modal.classList.add('show');
+    
+    // Hide main-categories when category is selected
+    // Hide main-categories when category is selected
+
+    
+    // Attach listeners to triangle items
+    const triangleItems = modal.querySelectorAll('.triangle-item');
+    triangleItems.forEach(item => {
+        const newItem = item.cloneNode(true);
+        item.parentNode.replaceChild(newItem, item);
+        newItem.addEventListener('click', () => {
+            const type = newItem.dataset.type;
+            console.log("Selected item type:", type);
+            modal.classList.remove('show');
+            showProductGrid(type);
+        });
+    });
+
+        const mainCategories = document.querySelector('.main-categories');
+    if (mainCategories) {
+        mainCategories.classList.add('hidden');
+        console.log("Main categories hidden.");
+    }
+    
+    // Attach close button listener
+    const closeBtn = modal.querySelector('.close-modal');
+    if (closeBtn) {
+        const newCloseBtn = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+        newCloseBtn.addEventListener('click', () => {
+            modal.classList.remove('show');
+            console.log("Category modal closed.");
+        });
+    }
+}
+
+// --- Initialize Main Category Listeners ---
+function initializeMainCategoryListeners() {
+    const categories = document.querySelectorAll('.main-category');
+    categories.forEach(category => {
+        const newCategory = category.cloneNode(true);
+        category.parentNode.replaceChild(newCategory, category);
+        newCategory.addEventListener('click', () => {
+            const categoryType = newCategory.dataset.category;
+            console.log("Main category clicked:", categoryType);
+            showCategoryModal(categoryType);
+        });
+    });
+}
+
+    </script>
+</body>
+</html>
