@@ -899,6 +899,53 @@ body.show-nav .top-nav {
         height: 300px;
     }
 }
+
+        #product-detail-modal.show .product-details-content {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #FFA000 #F5F5F5; /* Firefox: thumb yellow, track light gray */
+}
+
+#product-detail-modal.show .product-details-content::-webkit-scrollbar {
+    width: 8px; /* Scrollbar width for Webkit browsers */
+}
+
+#product-detail-modal.show .product-details-content::-webkit-scrollbar-track {
+    background: #F5F5F5; /* Light gray track */
+    border-radius: 4px;
+}
+
+#product-detail-modal.show .product-details-content::-webkit-scrollbar-thumb {
+    background: #664100; /* Yellow thumb */
+    border-radius: 4px;
+}
+
+#product-detail-modal.show .product-details-content::-webkit-scrollbar-thumb:hover {
+    background: #FFA000; /* Darker yellow on hover */
+}
+
+/* Fallback for modal itself if no specific content container */
+#product-detail-modal.show {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #FFA000 #F5F5F5; /* Firefox */
+}
+
+#product-detail-modal.show::-webkit-scrollbar {
+    width: 8px;
+}
+
+#product-detail-modal.show::-webkit-scrollbar-track {
+    background: #F5F5F5;
+    border-radius: 4px;
+}
+
+#product-detail-modal.show::-webkit-scrollbar-thumb {
+    background: #664100;
+    border-radius: 4px;
+}
+
+#product-detail-modal.show::-webkit-scrollbar-thumb:hover {
+    background: #FFA000;
+
     </style>
 </head>
 <body>
@@ -2074,4 +2121,5 @@ function initializeMainCategoryListeners() {
 </body>
 
 </html>
+
 
